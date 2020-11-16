@@ -1,5 +1,177 @@
-/**
- * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+
- */options{  static = true;}PARSER_BEGIN(RyzGrammar)package ryzgram;
+/** 
+ * JavaCC template file created by SF JavaCC plugin 1.5.28+ wizard for JavaCC 1.5.0+ 
+ */ options {   static = true; }  PARSER_BEGIN(RyzGrammar)
+ package ryzgram;
+ 
+public class RyzGrammar {
+ public static void main(String args [])
+ throws ParseException   {
+ RyzGrammar program = new RyzGrammar(System.in);
+ program.ExpressionList();    }
 
-public class RyzGrammar{  public static void main(String args []) throws ParseException  {    RyzGrammar parser = new RyzGrammar(System.in);    while (true)    {      System.out.println("Reading from standard input...");      System.out.print("Enter an expression like \"1+(2+3)*4;\" :");      try      {        switch (RyzGrammar.one_line())        {          case 0 :           System.out.println("OK.");          break;          case 1 :           System.out.println("Goodbye.");          break;          default :           break;        }      }      catch (Exception e)      {        System.out.println("NOK.");        System.out.println(e.getMessage());        RyzGrammar.ReInit(System.in);      }      catch (Error e)      {        System.out.println("Oops.");        System.out.println(e.getMessage());        break;      }    }  }}PARSER_END(RyzGrammar)SKIP :{  " "| "\r"| "\t"| "\n"}TOKEN : /* OPERATORS */{  < PLUS : "+" >| < MINUS : "-" >| < MULTIPLY : "*" >| < DIVIDE : "/" >}TOKEN :{  < CONSTANT : (< DIGIT >)+ >| < #DIGIT : [ "0"-"9" ] >}int one_line() :{}{  sum() ";"  {    return 0;  }| ";"  {    return 1;  }}void sum() :{}{  term()  (    (      < PLUS >    | < MINUS >    )    term()  )*}void term() :{}{  unary()  (    (      < MULTIPLY >    | < DIVIDE >    )    unary()  )*}void unary() :{}{  < MINUS > element()| element()}void element() :{}{  < CONSTANT >| "(" sum() ")"}
+}
+
+PARSER_END(RyzGrammar)
+
+SKIP :
+{    
+  " "
+| "\t" 
+| "\n"
+| "\r"
+}    
+ 
+
+
+TOKEN :
+{    
+  < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
+|
+  < NUM: ( ["0"-"9"] )+ >
+}    
+ 
+/** Top level production. */
+void ExpressionList() :
+{    
+    String s;
+}    
+{    
+    {    
+      System.out.println("Please type in an expression followed by a \";\" or ^D to quit:");
+      System.out.println("");
+    }    
+  ( s=Expression() ";"
+    {     System.out.println("********Postfixed********");
+      System.out.println(s);
+      char ch;
+      System.out.println("*********************");
+      for (int i=0;i<s.length();i++)
+    {    
+     ch=s.charAt(i);
+     if (ch=='*')
+     System.out.println("MUL");
+     else if (ch=='+')System.out.println("ADD");
+     else System.out.println("PUSH "+ch);
+    }    
+    System.out.println("*********************");
+    System.out.println("CODE GENERATION FOR MICRO-ASSEMBLER");
+    System.out.println("MVC 9999,D");
+    for (int i=0;i<s.length();i++)
+    {    
+     ch=s.charAt(i);
+     if (ch=='+')
+     {     System.out.println("LDR  D,A");
+       System.out.println("ADC  -1,D"); 
+       System.out.println("ADR  D,A");
+       System.out.println("STR  D,A");
+     }    
+     else if (ch=='*')
+     {     System.out.println("LDR  D,A");
+       System.out.println("ADC -1,D"); 
+       System.out.println("MLR  D,A");
+       System.out.println("STR  D,A");}    
+     else {     System.out.println("ADC "+"1"+",D");
+       System.out.println("LDC "+ch+",D");
+     }    
+    }    
+    
+      System.out.println("");
+      System.out.println("Please type in another expression followed by a \";\" or ^D to quit:");
+      System.out.println("");
+    }    
+  )*
+  <EOF>
+}    
+ 
+/** An Expression. */
+String Expression() :
+{    
+    java.util.Vector termimage = new java.util.Vector();
+    String s;
+}    
+{    
+  s=Term()
+    {    
+      termimage.addElement(s);
+    }    
+  ( "+" s=Term()
+    {    
+      termimage.addElement(s);
+    }    
+  )*
+    {    
+      if (termimage.size() == 1) {    
+        return (String)termimage.elementAt(0);
+          }     else {    
+            s =  (String)termimage.elementAt(0);
+        for (int i = 1; i < termimage.size()-1; i++) {    
+          s += "" + (String)termimage.elementAt(i);
+        }    
+        if (termimage.size() > 2) {    
+          s += "";
+        
+        s += "+" + (String)termimage.elementAt(termimage.size()-1);
+for (int i = 1; i < termimage.size()-1; i++) {    
+         s += "+" ; 
+       }     }    else s=s+((String)termimage.elementAt(1))+"+";
+            return s;
+          }    
+    }    
+}    
+ 
+/** A Term. */
+String Term() :
+{    
+    java.util.Vector factorimage = new java.util.Vector();
+    String s;
+}    
+{    
+  s=Factor()
+    {    
+      factorimage.addElement(s);
+    }    
+  ( "*" s=Factor()
+    {    
+      factorimage.addElement(s);
+    }    
+  )*
+    {    
+      if (factorimage.size() == 1) {    
+        return (String)factorimage.elementAt(0);
+          }     else {    
+            s = (String)factorimage.elementAt(0);
+        for (int i = 1; i < factorimage.size()-1; i++) {    
+          s += (String)factorimage.elementAt(i);
+        }    
+        if (factorimage.size() > 2) {    
+        s += (String)factorimage.elementAt(factorimage.size()-1);
+for (int i = 1; i < factorimage.size(); i++) {    
+          s += "*" ;
+        }     }     else s=s+(String)factorimage.elementAt(1)+"*";
+            return s;
+          }    
+    }    
+}    
+ 
+/** A Factor. */
+String Factor() :
+{    
+    Token t;
+    String s;
+}    
+{    
+  t=<ID>
+    {    
+      return t.image;
+    }    
+|
+  t=<NUM>
+    {    
+      return t.image;
+    }    
+|
+  "(" s=Expression() ")"
+    {    
+      return s;
+    }    
+}    
