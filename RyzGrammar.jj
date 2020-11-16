@@ -28,9 +28,121 @@ TOKEN :
   < ID: ["a"-"z","A"-"Z","_"] ( ["a"-"z","A"-"Z","_","0"-"9"] )* >
 |
   < NUM: ( ["0"-"9"] )+ >
+  
+| 
+ < ASSIGN: “=“ > 
+| < IFSY: “if” > 
+| < THENSY: “then” > 
+| < ELSESY: “else” >
+| < PROGRAMSY: “program” >
+| < ENDSY: “end” > 
+| < VARSY: “var” > 
+| < PRINT: “print” > 
+ 
 }    
  
 /** Top level production. */
+void program(): 
+{ 
+  < PROGRAMSY > < ID > 
+  System.out.println(“Program” + <ID> ); 
+  declartion()
+  StatementList()
+  <ENDSY> 
+}
+void declaration():
+{ 
+  System.out.println(“Please enter the declarations”) ;
+  ( < VARSY > < ID >  “;”)* 
+  
+} 
+
+
+
+
+}
+
+void Statementlist() : 
+{
+System.out.println(“Here are out statements”);
+  (
+  Statement()
+  )*
+ }
+void statement(): 
+ {
+  (
+  Assignment()
+  |
+  IfStatement()
+  |
+  WhileStatements()
+  | 
+  Print()  
+  )*
+}
+
+
+void Assignement(): 
+{
+
+ { < ID > System.out.println(token.image); }  “=“ Expression() 
+
+ }
+ 
+void If
+(IFSY > condtion()
+THENSY
+“{“ 
+StatementList() 
+“}”
+
+
+<ELSEY> 
+“{“ 
+StatementList()
+“}”
+
+
+Void while ( 
+
+
+
+
+Void condition 
+System.out.println(“condtion”)’;
+System.out.println(“”);
+
+Simplexp(): 
+
+
+
+}
+
+
+
+
+Void print():
+{ System.out.println(“print statement”);
+System.out.println(“”);
+{
+  (< PRINTSY> “(“ ( < ID > | < NUM > ) “)” 
+  
+  }
+ }
+ 
+ 
+Void rel():
+{}
+{
+  (“<“)
+  |
+  (“>”)
+ }
+  
+
+ 
+ 
 void ExpressionList() :
 {    
     String s;
@@ -134,6 +246,10 @@ String Term() :
     {    
       factorimage.addElement(s);
     }    
+|  “/“ s=Factor()
+   {
+    factorimage.addElement(s);
+    }
   )*
     {    
       if (factorimage.size() == 1) {    
