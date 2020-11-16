@@ -30,30 +30,33 @@ TOKEN :
   < NUM: ( ["0"-"9"] )+ >
   
 | 
- < ASSIGN: “=“ > 
-| < IFSY: “if” > 
-| < THENSY: “then” > 
-| < ELSESY: “else” >
-| < PROGRAMSY: “program” >
-| < ENDSY: “end” > 
-| < VARSY: “var” > 
-| < PRINT: “print” > 
+ < ASSIGN: "=" > 
+| < IFSY: "if" > 
+| < THENSY: "then" > 
+| < ELSESY: "else" >
+| < PROGRAMSY: "program" >
+| < ENDSY: "end" > 
+| < VARSY: "var" > 
+| < PRINT: "print" > 
  
 }    
  
 /** Top level production. */
 void program(): 
-{ 
-  < PROGRAMSY > < ID > 
-  System.out.println(“Program” + <ID> ); 
-  declartion()
+{
+
+
+
+  (  < PROGRAMSY > < ID > + ";" 
+  Declartions()
   StatementList()
-  <ENDSY> 
+  <ENDSY>
+)
 }
-void declaration():
+void Declarations():
 { 
-  System.out.println(“Please enter the declarations”) ;
-  ( < VARSY > < ID >  “;”)* 
+  System.out.println("Please enter the declarations") ;
+  ( < VARSY > < ID >  ";")* 
   
 } 
 
@@ -64,12 +67,12 @@ void declaration():
 
 void Statementlist() : 
 {
-System.out.println(“Here are out statements”);
+System.out.println("Here are out statements");
   (
   Statement()
   )*
  }
-void statement(): 
+void Statement(): 
  {
   (
   Assignment()
@@ -86,22 +89,22 @@ void statement():
 void Assignement(): 
 {
 
- { < ID > System.out.println(token.image); }  “=“ Expression() 
+ { < ID > System.out.println(token.image); }  "=" Expression() 
 
  }
  
 void If
 (IFSY > condtion()
 THENSY
-“{“ 
+"{" 
 StatementList() 
-“}”
+"}"
 
 
 <ELSEY> 
-“{“ 
+"{" 
 StatementList()
-“}”
+"}"
 
 
 Void while ( 
@@ -110,8 +113,8 @@ Void while (
 
 
 Void condition 
-System.out.println(“condtion”)’;
-System.out.println(“”);
+System.out.println("condtion")’;
+System.out.println("");
 
 Simplexp(): 
 
@@ -123,10 +126,10 @@ Simplexp():
 
 
 Void print():
-{ System.out.println(“print statement”);
-System.out.println(“”);
+{ System.out.println("print statement");
+System.out.println("");
 {
-  (< PRINTSY> “(“ ( < ID > | < NUM > ) “)” 
+  (< PRINTSY> "(" ( < ID > | < NUM > ) ")" 
   
   }
  }
@@ -135,9 +138,9 @@ System.out.println(“”);
 Void rel():
 {}
 {
-  (“<“)
+  ("<")
   |
-  (“>”)
+  (">")
  }
   
 
@@ -246,7 +249,7 @@ String Term() :
     {    
       factorimage.addElement(s);
     }    
-|  “/“ s=Factor()
+|  "/" s=Factor()
    {
     factorimage.addElement(s);
     }
